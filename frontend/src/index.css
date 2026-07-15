@@ -1,0 +1,169 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    background-color: #000000;
+    background-image: 
+      radial-gradient(at 10% 20%, rgba(120, 119, 198, 0.03) 0px, transparent 55%),
+      radial-gradient(at 90% 80%, rgba(0, 102, 204, 0.02) 0px, transparent 50%);
+    background-attachment: fixed;
+  }
+}
+
+/* Glassmorphism system */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-panel-hover:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.16);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  transform: translateY(-2px);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-input {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(10px);
+}
+
+.glass-input:focus {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(59, 130, 246, 0.5);
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+  outline: none;
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.01);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Typography styles */
+.text-display {
+  font-family: 'Outfit', sans-serif;
+  letter-spacing: -0.02em;
+}
+
+/* Animated Flowing Line for Navigation */
+@keyframes dash {
+  to {
+    stroke-dashoffset: -40;
+  }
+}
+.nav-path-animate {
+  stroke-dasharray: 8, 4;
+  animation: dash 1.5s linear infinite;
+}
+
+/* Override Autofill style to match Apple Light Theme inputs */
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus, 
+input:-webkit-autofill:active {
+  -webkit-text-fill-color: #1d1d1f !important;
+  transition: background-color 5000s ease-in-out 0s;
+  -webkit-box-shadow: 0 0 0 1000px #f5f5f7 inset !important;
+  box-shadow: 0 0 0 1000px #f5f5f7 inset !important;
+}
+
+/* Pulsing security threat dots */
+@keyframes radar-pulse {
+  0% {
+    r: 4;
+    opacity: 1;
+  }
+  100% {
+    r: 15;
+    opacity: 0;
+  }
+}
+.pulse-circle {
+  animation: radar-pulse 2s infinite ease-out;
+}
+
+/* Glass Orb Animations for visionOS background */
+@keyframes float-orb-1 {
+  0% { transform: translate(0px, 0px) scale(1); }
+  33% { transform: translate(30px, -50px) scale(1.1); }
+  66% { transform: translate(-20px, 20px) scale(0.95); }
+  100% { transform: translate(0px, 0px) scale(1); }
+}
+
+@keyframes float-orb-2 {
+  0% { transform: translate(0px, 0px) scale(1); }
+  50% { transform: translate(-40px, 40px) scale(1.05); }
+  100% { transform: translate(0px, 0px) scale(1); }
+}
+
+.animate-orb-1 {
+  animation: float-orb-1 12s infinite ease-in-out;
+}
+
+.animate-orb-2 {
+  animation: float-orb-2 15s infinite ease-in-out;
+}
+
+/* Apple Football Animations */
+@keyframes float-ball {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-15px); }
+}
+
+@keyframes rotate-ball {
+  to { transform: rotate(360deg); }
+}
+
+.animate-float-ball {
+  animation: float-ball 6s infinite ease-in-out;
+}
+
+.animate-rotate-ball {
+  animation: rotate-ball 20s infinite linear;
+}
+
+/* Player Kicking Animations */
+@keyframes kick-swing {
+  0%, 100% { transform: rotate(-8deg); }
+  40% { transform: rotate(-35deg); } /* swing back */
+  52% { transform: rotate(25deg); }  /* kick impact */
+}
+
+@keyframes ball-flight {
+  0%, 40% {
+    transform: translate(0px, 0px) scale(1) rotate(0deg);
+    opacity: 1;
+  }
+  52% {
+    opacity: 1;
+  }
+  75% {
+    transform: translate(110px, -70px) scale(0.55) rotate(360deg);
+    opacity: 0;
+  }
+  85%, 100% {
+    transform: translate(0px, 0px) scale(1) rotate(0deg);
+    opacity: 0;
+  }
+}
+
+
+
