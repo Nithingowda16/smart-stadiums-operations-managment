@@ -145,7 +145,10 @@ async def run_simulation_loop():
                 "transportation": transit_list,
                 "emergencies": [{"id": e.id, "type": e.type, "location": e.location, "severity": e.severity, "description": e.description, "status": e.status} for e in db.query(models.Emergency).filter(models.Emergency.status != "Resolved").all()],
                 "alerts": alerts_list,
-                "ai_insights": decisions
+                "ai_insights": decisions,
+                "stadium": {"attendance": 68420, "capacity": 80000},
+                "incident_response_speed_min": 2.4,
+                "stands_revenue": 12450.0
             }
             
             # 7. Broadcast via WebSockets

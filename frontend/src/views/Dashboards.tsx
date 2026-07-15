@@ -512,8 +512,10 @@ const FanDashboard: React.FC<SubDashboardProps> = ({
                   </h4>
                   
                   <div>
-                    <label className="text-[9px] text-gray-400 font-bold uppercase block mb-1">{t("startPoint", language)}</label>
+                    <label htmlFor="wayfinder-start-select" className="text-[9px] text-gray-400 font-bold uppercase block mb-1">{t("startPoint", language)}</label>
                     <select 
+                      id="wayfinder-start-select"
+                      aria-label="Start Node selection"
                       value={startNode} 
                       onChange={(e) => setStartNode(e.target.value)}
                       className={styles.select}
@@ -523,8 +525,10 @@ const FanDashboard: React.FC<SubDashboardProps> = ({
                   </div>
 
                   <div>
-                    <label className="text-[9px] text-gray-400 font-bold uppercase block mb-1">{t("destination", language)}</label>
+                    <label htmlFor="wayfinder-end-select" className="text-[9px] text-gray-400 font-bold uppercase block mb-1">{t("destination", language)}</label>
                     <select 
+                      id="wayfinder-end-select"
+                      aria-label="Destination Node selection"
                       value={endNode} 
                       onChange={(e) => setEndNode(e.target.value)}
                       className={styles.select}
@@ -533,9 +537,11 @@ const FanDashboard: React.FC<SubDashboardProps> = ({
                     </select>
                   </div>
 
-                  <label className="flex items-center space-x-2 text-[10px] cursor-pointer pt-2">
+                  <label htmlFor="wayfinder-accessible-check" className="flex items-center space-x-2 text-[10px] cursor-pointer pt-2">
                     <input 
                       type="checkbox"
+                      id="wayfinder-accessible-check"
+                      aria-label="Wheelchair accessible route only"
                       checked={accessible}
                       onChange={(e) => setAccessible(e.target.checked)}
                       className="accent-blue-500 rounded"
@@ -962,7 +968,7 @@ const OrganizerDashboard: React.FC<{ telemetry: TelemetryData; nodes: NavNode[];
             <span>AI Dispatch Advice</span>
           </h3>
           <div className={`p-4 rounded-2xl border space-y-3 ${styles.subCard}`}>
-            <p className={`text-xs font-bold ${styles.titleText}`}>Crowd Risk: {telemetry.ai_insights.crowd_risk_assessment}</p>
+            <p className={`text-xs font-bold ${styles.titleText}`}>Crowd Risk: {telemetry.ai_insights.stadium_risk_level}</p>
             <p className={`text-xs ${styles.subText}`}>Optimal exit plan: {telemetry.ai_insights.best_exit_mode}</p>
             <div className="text-[10px] text-gray-400 space-y-1 pt-2 border-t border-neutral-200/10">
               <p>• Recommend dispatching support to Gate A.</p>
@@ -1058,9 +1064,9 @@ const SecurityDashboard: React.FC<{ telemetry: TelemetryData; nodes: NavNode[]; 
             {telemetry.crowd.map(c => {
               const risk = c.density > 80 ? 'CRITICAL' : (c.density > 50 ? 'MEDIUM' : 'LOW');
               return (
-                <div key={c.sector_id} className={`p-3 rounded-2xl border ${styles.subCard} flex justify-between items-center text-xs`}>
+                <div key={c.sector} className={`p-3 rounded-2xl border ${styles.subCard} flex justify-between items-center text-xs`}>
                   <div>
-                    <p className={`font-bold ${styles.titleText}`}>{c.sector_id}</p>
+                    <p className={`font-bold ${styles.titleText}`}>{c.sector}</p>
                     <p className="text-[9px] text-gray-400 mt-0.5">Capacity: {c.density}%</p>
                   </div>
                   <span className={`text-[9px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider

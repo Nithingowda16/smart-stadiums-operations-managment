@@ -81,6 +81,11 @@ export interface AIInsights {
   recommendations: string[];
 }
 
+export interface StadiumInfo {
+  attendance: number;
+  capacity: number;
+}
+
 export interface TelemetryData {
   timestamp: string;
   match: MatchInfo;
@@ -92,6 +97,9 @@ export interface TelemetryData {
   emergencies: EmergencyInfo[];
   alerts: AlertInfo[];
   ai_insights: AIInsights;
+  stadium: StadiumInfo;
+  incident_response_speed_min: number;
+  stands_revenue: number;
 }
 
 export interface NavNode {

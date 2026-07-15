@@ -273,6 +273,8 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
                   <UserIcon className="absolute left-4 top-3.5 w-4 h-4 text-gray-400" />
                   <input 
                     type="text" 
+                    id="register-fullname"
+                    aria-label="Full Name"
                     placeholder="Full Name" 
                     required
                     value={name}
@@ -284,6 +286,8 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
                   <Phone className="absolute left-4 top-3.5 w-4 h-4 text-gray-400" />
                   <input 
                     type="text" 
+                    id="register-phone"
+                    aria-label="Phone Number"
                     placeholder="Phone Number" 
                     required
                     value={phone}
@@ -298,6 +302,8 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
               <Mail className="absolute left-4 top-3.5 w-4 h-4 text-gray-400" />
               <input 
                 type="email" 
+                id="login-email"
+                aria-label="Email Address"
                 placeholder="Email Address" 
                 required
                 value={email}
@@ -310,6 +316,8 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
               <Lock className="absolute left-4 top-3.5 w-4 h-4 text-gray-400" />
               <input 
                 type="password" 
+                id="login-password"
+                aria-label="Password"
                 placeholder="Password" 
                 required
                 value={password}
@@ -321,8 +329,10 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
             {/* Select Dropdowns */}
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="text-[10px] text-gray-400 font-bold uppercase block mb-1">Target Portal</label>
+                <label htmlFor="login-role-select" className="text-[10px] text-gray-400 font-bold uppercase block mb-1">Target Portal</label>
                 <select 
+                  id="login-role-select"
+                  aria-label="Target Portal Role"
                   value={role}
                   onChange={(e) => setRole(e.target.value)}
                   className="w-full bg-[#f5f5f7] border border-[#d2d2d7] rounded-2xl text-xs text-[#1d1d1f] p-3 focus:outline-none focus:border-[#86868b] focus:bg-white"
@@ -332,8 +342,10 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
               </div>
               
               <div>
-                <label className="text-[10px] text-gray-400 font-bold uppercase block mb-1">Accessibility</label>
+                <label htmlFor="login-access-select" className="text-[10px] text-gray-400 font-bold uppercase block mb-1">Accessibility</label>
                 <select 
+                  id="login-access-select"
+                  aria-label="Accessibility Requirements"
                   value={accessibility}
                   onChange={(e) => setAccessibility(e.target.value)}
                   className="w-full bg-[#f5f5f7] border border-[#d2d2d7] rounded-2xl text-xs text-[#1d1d1f] p-3 focus:outline-none focus:border-[#86868b] focus:bg-white"

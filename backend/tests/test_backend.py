@@ -72,3 +72,74 @@ def test_sustainability_heuristics():
     assert analysis["eco_rating"] in ["C", "D"]
     assert len(analysis["sustainability_actions"]) > 0
     assert any("Dim lights" in a or "AC temperature" in a for a in analysis["sustainability_actions"])
+
+# --- Endpoint Integration Tests using TestClient ---
+from fastapi.testclient import TestClient
+import sys
+import os
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from main import app
+
+client = TestClient(app)
+
+def test_api_concessions():
+    response = client.get("/api/food")
+    assert response.status_code == 200
+    data = response.json()
+    assert len(data) > 0
+    assert "name" in data[0]
+
+def test_api_navigation_nodes():
+    response = client.get("/api/navigation/nodes")
+    assert response.status_code == 200
+    data = response.json()
+    assert len(data) > 0
+    assert "id" in data[0]
+
+def test_api_calculate_route():
+    payload = {
+        "start_node": "gate_a",
+        "end_node": "sec_101",
+        "accessible_only": False
+    }
+    response = client.post("/api/navigation/route", json=payload)
+    assert response.status_code == 200
+    data = response.json()
+    assert "coordinate_path" in data
+    assert "voice_instructions" in data
+
+def test_api_telemetry():
+    response = client.get("/api/telemetry")
+    assert response.status_code == 200
+    data = response.json()
+    assert "match" in data
+    assert "crowd" in data
+
+def test_api_auth_flow():
+    reg_payload = {
+        "name": "Test User",
+        "email": "testuser@example.com",
+        "phone": "1234567890",
+        "password": "testpassword123",
+        "role": "Fan",
+        "seat": "Sector 101, Row A, Seat 10",
+        "parking": "Parking Lot B",
+        "language": "English",
+        "emergency_contact": "999999999",
+        "medical_info": "None",
+        "accessibility_requirement": "None"
+    }
+    response = client.post("/api/auth/register", json=reg_payload)
+    assert response.status_code in [201, 400]
+    
+    login_payload = {
+        "email": "testuser@example.com",
+        "password": "testpassword123"
+    }
+    login_response = client.post("/api/auth/login", json=login_payload)
+    assert login_response.status_code == 200
+    login_data = login_response.json()
+    assert "access_token" in login_data
+    assert login_data["user"]["email"] == "testuser@example.com"
+
