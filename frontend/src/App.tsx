@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { User, TelemetryData, NavNode } from './types';
 import { Navbar } from './components/Navbar';
 import { DynamicIsland } from './components/DynamicIsland';
+import { API_BASE, WS_BASE } from './config';
 import { Login } from './views/Login';
 import { Dashboards } from './views/Dashboards';
 import { Sparkles, X, Send } from 'lucide-react';
@@ -48,10 +49,7 @@ function App() {
     let fallbackInterval: any = null;
 
     const connectWebSocket = () => {
-      const loc = window.location;
-      const wsUrl = loc.protocol === 'https:' 
-        ? `wss://${loc.host}/ws` 
-        : `ws://${loc.hostname === 'localhost' ? '127.0.0.1' : loc.hostname}:8000/ws`;
+      const wsUrl = `${WS_BASE}/ws`;
       
       ws = new WebSocket(wsUrl);
 
@@ -83,7 +81,7 @@ function App() {
 
     const fetchTelemetry = async () => {
       try {
-        const res = await fetch('/api/telemetry');
+        const res = await fetch(`${API_BASE}/api/telemetry`);
         if (res.ok) {
           const data = await res.json();
           setTelemetry(data);
@@ -103,7 +101,7 @@ function App() {
 
   const fetchProfile = async (jwtToken: string) => {
     try {
-      const res = await fetch('/api/auth/profile', {
+      const res = await fetch(`${API_BASE}/api/auth/profile`, {
         headers: { 'Authorization': `Bearer ${jwtToken}` }
       });
       if (res.ok) {
@@ -120,7 +118,7 @@ function App() {
 
   const fetchNodes = async () => {
     try {
-      const res = await fetch('/api/navigation/nodes');
+      const res = await fetch(`${API_BASE}/api/navigation/nodes`);
       if (res.ok) {
         const data = await res.json();
         setNodes(data);
@@ -160,7 +158,7 @@ function App() {
     setChatQuery('');
 
     try {
-      const res = await fetch('/api/assistant/chat', {
+      const res = await fetch(`${API_BASE}/api/assistant/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ query: userText, language: language })
@@ -189,7 +187,7 @@ function App() {
   // API triggers
   const triggerEmergency = async (type: string, location: string, severity: string, description: string) => {
     try {
-      const res = await fetch('/api/emergency/trigger', {
+      const res = await fetch(`${API_BASE}/api/emergency/trigger`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
@@ -205,7 +203,7 @@ function App() {
 
   const resolveEmergency = async (eid: number) => {
     try {
-      const res = await fetch(`/api/emergency/resolve/${eid}`, {
+      const res = await fetch(`${API_BASE}/api/emergency/resolve/${eid}`, {
         method: 'POST',
         headers: { 
           'Authorization': token ? `Bearer ${token}` : ''

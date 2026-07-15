@@ -1,0 +1,19 @@
+# SQLite temporary files
+*.db-journal
+*.db-shm
+*.db-wal
+fifa_one.db-journal
+fifa_one.db-shm
+fifa_one.db-wal
+backend/fifa_one.db-journal
+backend/fifa_one.db-shm
+backend/fifa_one.db-wal
+
+# Build and local files
+node_modules/
+dist/
+venv/
+.env
+.DS_Store
+.idea/
+.vscode/

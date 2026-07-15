@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { User, TelemetryData, NavNode, FoodStand, AuditLogItem } from '../types';
 import { StadiumMap } from '../components/StadiumMap';
+import { API_BASE } from '../config';
 import { 
   ShieldAlert, Shield, Activity, Truck, Lightbulb, Droplets, 
   MapPin, Coffee, Volume2, Users, CheckCircle2,
@@ -248,7 +249,7 @@ const FanDashboard: React.FC<SubDashboardProps> = ({
   const styles = getThemeClasses(theme, accessibility.highContrast);
 
   useEffect(() => {
-    fetch('/api/food')
+    fetch(`${API_BASE}/api/food`)
       .then(res => res.json())
       .then(data => setStands(data))
       .catch(() => {});
@@ -309,7 +310,7 @@ const FanDashboard: React.FC<SubDashboardProps> = ({
 
   const handleCalculateRoute = async () => {
     try {
-      const res = await fetch('/api/navigation/route', {
+      const res = await fetch(`${API_BASE}/api/navigation/route`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ start_node: startNode, end_node: endNode, accessible_only: accessible })
@@ -1236,7 +1237,7 @@ const AdminDashboard: React.FC<{ telemetry: TelemetryData; language: string; acc
   const styles = getThemeClasses(theme, accessibility.highContrast);
 
   useEffect(() => {
-    fetch('/api/audit-logs')
+    fetch(`${API_BASE}/api/audit-logs`)
       .then(res => res.json())
       .then(data => setLogs(data))
       .catch(() => {});

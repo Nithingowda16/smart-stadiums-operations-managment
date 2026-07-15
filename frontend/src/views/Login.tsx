@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Sparkles, Smile, Phone, Mail, Lock, User as UserIcon } from 'lucide-react';
+import { API_BASE } from '../config';
 
 interface LoginProps {
   onLoginSuccess: (token: string, userData: any) => void;
@@ -49,7 +50,7 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
     setLoading(true);
     setError('');
 
-    const url = isRegister ? '/api/auth/register' : '/api/auth/login';
+    const url = isRegister ? `${API_BASE}/api/auth/register` : `${API_BASE}/api/auth/login`;
     const payload = isRegister 
       ? { name, email, phone, password, role, accessibility_requirement: accessibility }
       : { email, password };
@@ -109,7 +110,7 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
         setLoading(true);
         try {
           const targetEmail = `${role.toLowerCase().replace(' ', '')}@fifa.one`;
-          const res = await fetch('/api/auth/login', {
+          const res = await fetch(`${API_BASE}/api/auth/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email: targetEmail, password: 'password123' })
