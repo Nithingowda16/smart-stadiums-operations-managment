@@ -1,5 +1,6 @@
+import os
 from datetime import datetime, timedelta
-from typing import Optional, Union, Any
+from typing import Optional, Union, Any, List
 import bcrypt
 from jose import jwt, JWTError
 from fastapi import Depends, HTTPException, status
@@ -8,12 +9,13 @@ from sqlalchemy.orm import Session
 from database import get_db
 import models
 
-# SECRET_KEY for JWT signature - in production, this should be an environment variable.
-SECRET_KEY = "fifa_one_super_secret_stadium_key"
+# SECRET_KEY for JWT signature loaded from environment variable with secure fallback.
+SECRET_KEY = os.getenv("JWT_SECRET_KEY", "fifa_one_super_secret_stadium_key")
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 480 # 8 Hours session
+ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "480")) # 8 Hours session
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/auth/login", auto_error=False)
+
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     try:

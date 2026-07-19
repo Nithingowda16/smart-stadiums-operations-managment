@@ -1,13 +1,17 @@
+# Python
+__pycache__/
+*.pyc
+
 # SQLite temporary files
+*.db
 *.db-journal
 *.db-shm
 *.db-wal
-fifa_one.db-journal
-fifa_one.db-shm
-fifa_one.db-wal
-backend/fifa_one.db-journal
-backend/fifa_one.db-shm
-backend/fifa_one.db-wal
+fifa_one.db
+backend/fifa_one.db
+
+# Script helper
+powershell.bat
 
 # Build and local files
 node_modules/
@@ -17,3 +21,4 @@ venv/
 .DS_Store
 .idea/
 .vscode/
+

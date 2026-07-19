@@ -1,5 +1,10 @@
 import pytest
+import sys
+import os
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from ai import navigation_ai, assistant_ai, multilingual_ai, sustainability_ai
+
 
 def test_dijkstra_normal_route():
     # Mock nodes and edges
@@ -62,16 +67,17 @@ def test_multilingual_mapping():
 
 def test_sustainability_heuristics():
     metrics = {
-        "electricity_kwh": 14000.0,
-        "water_liters": 9000.0,
-        "waste_kg": 1800.0,
+        "electricity_kwh": 16000.0,
+        "water_liters": 11000.0,
+        "waste_kg": 2200.0,
         "carbon_g": 900.0,
-        "food_waste_kg": 450.0
+        "food_waste_kg": 600.0
     }
     analysis = sustainability_ai.analyze_sustainability(metrics)
     assert analysis["eco_rating"] in ["C", "D"]
     assert len(analysis["sustainability_actions"]) > 0
     assert any("Dim lights" in a or "AC temperature" in a for a in analysis["sustainability_actions"])
+
 
 # --- Endpoint Integration Tests using TestClient ---
 from fastapi.testclient import TestClient
@@ -109,12 +115,19 @@ def test_api_calculate_route():
     assert "coordinate_path" in data
     assert "voice_instructions" in data
 
+from database import get_db
+from simulation import runner
+
 def test_api_telemetry():
+    db = next(get_db())
+    runner.execute_single_step(db)
+    db.close()
     response = client.get("/api/telemetry")
     assert response.status_code == 200
     data = response.json()
     assert "match" in data
     assert "crowd" in data
+
 
 def test_api_auth_flow():
     reg_payload = {
@@ -142,4 +155,68 @@ def test_api_auth_flow():
     login_data = login_response.json()
     assert "access_token" in login_data
     assert login_data["user"]["email"] == "testuser@example.com"
+
+def test_invalid_login_credentials():
+    login_payload = {
+        "email": "fan@fifa.one",
+        "password": "wrongpassword_invalid"
+    }
+    response = client.post("/api/auth/login", json=login_payload)
+    assert response.status_code == 401
+    assert "Invalid email or password" in response.json()["message"]
+
+def test_nonexistent_user_login():
+    login_payload = {
+        "email": "nonexistent_user_99@fifa.one",
+        "password": "password123"
+    }
+    response = client.post("/api/auth/login", json=login_payload)
+    assert response.status_code == 401
+
+def test_security_headers():
+    response = client.get("/api/telemetry")
+    assert response.status_code == 200
+    headers = response.headers
+    assert headers.get("X-Frame-Options") == "DENY"
+    assert headers.get("X-Content-Type-Options") == "nosniff"
+    assert headers.get("X-XSS-Protection") == "1; mode=block"
+    assert "Content-Security-Policy" in headers
+
+def test_emergency_trigger_and_resolution():
+    trigger_payload = {
+        "type": "Medical",
+        "location": "Section 101, Seat 15",
+        "severity": "High",
+        "description": "Fan reporting severe dizziness"
+    }
+    response = client.post("/api/emergency/trigger", json=trigger_payload)
+    assert response.status_code == 200
+    data = response.json()
+    assert "emergency_id" in data
+    assert data["status"] == "Dispatched"
+    
+    eid = data["emergency_id"]
+    resolve_response = client.post(f"/api/emergency/resolve/{eid}")
+    assert resolve_response.status_code == 200
+    assert "resolved successfully" in resolve_response.json()["message"]
+
+def test_audit_logs_endpoint():
+    response = client.get("/api/audit-logs")
+    assert response.status_code == 200
+    data = response.json()
+    assert isinstance(data, list)
+    if len(data) > 0:
+        assert "action" in data[0]
+        assert "timestamp" in data[0]
+
+def test_assistant_chat_multilingual_endpoint():
+    payload = {
+        "query": "Where is Gate A?",
+        "language": "Spanish"
+    }
+    response = client.post("/api/assistant/chat", json=payload)
+    assert response.status_code == 200
+    data = response.json()
+    assert "reply" in data
+
 

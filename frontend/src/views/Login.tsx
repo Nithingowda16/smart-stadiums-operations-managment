@@ -201,16 +201,17 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
 
         {/* Text descriptions matching Apple marketing */}
         <div className="space-y-4 max-w-lg">
-          <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-[#1d1d1f] font-sans">
+          <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-white font-sans">
             FIFA ONE AI
           </h1>
-          <p className="text-lg font-medium text-[#86868b] leading-tight">
+          <p className="text-lg font-medium text-blue-400 leading-tight">
             One Identity. One Stadium. One AI.
           </p>
-          <p className="text-xs md:text-sm text-[#86868b] leading-relaxed">
+          <p className="text-xs md:text-sm text-gray-300 leading-relaxed">
             Welcome to the smart stadium operating system for the FIFA World Cup 2026. Securely authenticate your stadium pass to experience real-time wayfinding, instant AI translations, accessibility routing, and live operations command.
           </p>
         </div>
+
 
       </div>
 

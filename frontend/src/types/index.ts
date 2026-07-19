@@ -2,12 +2,16 @@ export interface User {
   fifa_id: string;
   name: string;
   email: string;
+  phone?: string;
   role: string;
   seat: string | null;
   parking: string | null;
   language: string;
+  emergency_contact?: string;
+  medical_info?: string;
   accessibility_requirement: string;
   qr_code: string | null;
+  face_id_placeholder?: string;
   digital_stadium_pass: string | null;
 }
 
@@ -16,6 +20,7 @@ export interface MatchInfo {
   score: string;
   phase: string;
   time_elapsed: number;
+  status?: string;
 }
 
 export interface WeatherInfo {
@@ -31,6 +36,11 @@ export interface SustainabilityMetrics {
   plastic_bottles: number;
   carbon_g: number;
   food_waste_kg: number;
+  solar_kwh?: number;
+  rainwater_liters?: number;
+  waste_recycled_percent?: number;
+  carbon_offset_kg?: number;
+  eco_rating?: string;
 }
 
 export interface CrowdSector {
@@ -63,11 +73,12 @@ export interface EmergencyInfo {
 }
 
 export interface AlertInfo {
-  id: number;
+  id: string | number;
   title: string;
   message: string;
   type: 'info' | 'warning' | 'emergency';
-  timestamp: string;
+  timestamp?: string;
+  time?: string;
 }
 
 export interface AIInsights {
@@ -91,16 +102,19 @@ export interface TelemetryData {
   match: MatchInfo;
   weather: WeatherInfo;
   sustainability: SustainabilityMetrics;
-  crowd: CrowdSector[];
+  crowd: any;
   parking: ParkingInfo[];
   transportation: TransportationInfo[];
   emergencies: EmergencyInfo[];
+  active_incidents?: EmergencyInfo[];
+  gate_queues?: CrowdSector[];
   alerts: AlertInfo[];
   ai_insights: AIInsights;
   stadium: StadiumInfo;
   incident_response_speed_min: number;
   stands_revenue: number;
 }
+
 
 export interface NavNode {
   id: string;
@@ -129,3 +143,4 @@ export interface AuditLogItem {
   action: string;
   details: string;
 }
+

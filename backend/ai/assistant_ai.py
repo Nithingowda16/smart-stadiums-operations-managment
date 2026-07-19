@@ -20,7 +20,8 @@ def get_assistant_response(query: str, user_role: str, user_lang: str = "English
             "I am initiating a search across the stadium's local check-in registry and dispatching volunteers to patrol."
         )
         action = "lost_person_search"
-    elif re.search(r"\b(food|eat|hungry|drink|water|concession)\b", q):
+    elif re.search(r"\b(food|eat|hungry|drink|water|concession|burgers?|pizzas?|tacos?)\b", q):
+
         reply = (
             "🍔 CONCESSIONS: The closest food court is Food Court 1 (near Gate B), which currently has a 4-minute wait time. "
             "They serve Vegetarian, Halal, and Vegan options. Would you like me to draw the route?"

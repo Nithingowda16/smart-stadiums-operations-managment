@@ -1,6 +1,10 @@
 import asyncio
-from fastapi import FastAPI, Depends, HTTPException, status, WebSocket, WebSocketDisconnect
+import os
+import time
+from collections import defaultdict
+from fastapi import FastAPI, Depends, HTTPException, status, WebSocket, WebSocketDisconnect, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel, EmailStr
 from sqlalchemy.orm import Session
 from typing import List, Optional, Dict, Any
@@ -17,14 +21,72 @@ Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="FIFA ONE AI Smart Stadium OS", version="1.0.0")
 
-# Setup CORS
+# Setup CORS with environment variable fallback
+allowed_origins_env = os.getenv("ALLOWED_ORIGINS", "*")
+allowed_origins = [origin.strip() for origin in allowed_origins_env.split(",") if origin.strip()]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=allowed_origins if "*" not in allowed_origins else ["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# --- Security Headers Middleware ---
+@app.middleware("http")
+async def security_headers_middleware(request: Request, call_next):
+    response: Response = await call_next(request)
+    response.headers["X-Frame-Options"] = "DENY"
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["X-XSS-Protection"] = "1; mode=block"
+    response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+    response.headers["Content-Security-Policy"] = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' ws: wss:;"
+    return response
+
+# --- Rate Limiting Middleware ---
+RATE_LIMIT_WINDOW = 60 # 60 seconds
+MAX_REQUESTS_PER_WINDOW = int(os.getenv("RATE_LIMIT_PER_MINUTE", "120"))
+request_history: Dict[str, List[float]] = defaultdict(list)
+
+@app.middleware("http")
+async def rate_limiting_middleware(request: Request, call_next):
+    if request.url.path in ["/api/auth/login", "/api/auth/register", "/api/emergencies"]:
+        client_ip = request.client.host if request.client else "127.0.0.1"
+        now = time.time()
+        request_history[client_ip] = [t for t in request_history[client_ip] if now - t < RATE_LIMIT_WINDOW]
+        if len(request_history[client_ip]) >= MAX_REQUESTS_PER_WINDOW:
+            return JSONResponse(
+                status_code=429,
+                content={"status": "error", "message": "Rate limit exceeded. Please try again in a minute."}
+            )
+        request_history[client_ip].append(now)
+    return await call_next(request)
+
+# --- Global Exception Handlers ---
+@app.exception_handler(HTTPException)
+async def http_exception_handler(request: Request, exc: HTTPException):
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={
+            "status": "error",
+            "message": exc.detail if isinstance(exc.detail, str) else "Request error",
+            "detail": exc.detail
+        },
+        headers=exc.headers
+    )
+
+@app.exception_handler(Exception)
+async def generic_exception_handler(request: Request, exc: Exception):
+    return JSONResponse(
+        status_code=500,
+        content={
+            "status": "error",
+            "message": "Internal server error occurred",
+            "detail": str(exc)
+        }
+    )
+
 
 # WebSocket Connection Pool
 class ConnectionManager:
@@ -232,9 +294,11 @@ def bootstrap_database(db: Session):
         db.add(models.NavigationEdge(start_node=start, end_node=end, weight=wt, accessible=acc))
 
     db.commit()
-    print("FIFA ONE AI: DB successfully seeded.")
+    runner.execute_single_step(db)
+    print("FIFA ONE AI: DB successfully seeded and telemetry cache initialized.")
 
 # --- Endpoints API ---
+
 
 @app.post("/api/auth/register", status_code=status.HTTP_201_CREATED)
 def register(user_data: UserRegister, db: Session = Depends(get_db)):

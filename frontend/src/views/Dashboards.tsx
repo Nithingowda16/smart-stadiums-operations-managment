@@ -348,7 +348,8 @@ const FanDashboard: React.FC<SubDashboardProps> = ({
     const standObj = stands.find(s => s.name === selectedStand);
     if (!standObj) return 0;
     // Base wait time + calculated crowd delay from telemetry
-    const crowdFactor = telemetry.crowd.find(c => standObj.nearest_gate.toLowerCase().includes(c.sector.toLowerCase()) || c.sector.toLowerCase().includes(standObj.nearest_gate.toLowerCase()));
+    const crowdFactor = (Array.isArray(telemetry?.crowd) ? telemetry.crowd : (telemetry?.gate_queues || [])).find((c: any) => standObj.nearest_gate.toLowerCase().includes(c.sector.toLowerCase()) || c.sector.toLowerCase().includes(standObj.nearest_gate.toLowerCase()));
+
     if (crowdFactor && crowdFactor.density > 80) return 8; // 8 minutes extra delay warning
     return 0;
   };
@@ -1001,8 +1002,9 @@ const SecurityDashboard: React.FC<{ telemetry: TelemetryData; nodes: NavNode[]; 
         <div className={styles.card}>
           <p className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">Crowd Density Alert</p>
           <h2 className={`text-2xl font-black mt-1 font-mono ${styles.titleText}`}>
-            {(telemetry.crowd.reduce((acc, c) => acc + c.density, 0) / telemetry.crowd.length).toFixed(1)}%
+            {(Array.isArray(telemetry?.crowd) ? telemetry.crowd : (telemetry?.gate_queues || [])).reduce((acc: number, c: any) => acc + (c.density || 0), 0) / Math.max(1, (Array.isArray(telemetry?.crowd) ? telemetry.crowd : (telemetry?.gate_queues || [])).length)}%
           </h2>
+
           <span className="text-[9px] bg-blue-500/10 text-blue-500 border border-blue-500/20 px-2 py-0.5 rounded-full mt-1.5 inline-block font-semibold">
             Average risk index
           </span>
@@ -1061,7 +1063,8 @@ const SecurityDashboard: React.FC<{ telemetry: TelemetryData; nodes: NavNode[]; 
         <div className={`${styles.card} space-y-4`}>
           <h3 className={`text-sm font-bold text-display ${styles.titleText}`}>CCTV AI Dispersal Index</h3>
           <div className="space-y-3">
-            {telemetry.crowd.map(c => {
+            {(Array.isArray(telemetry?.crowd) ? telemetry.crowd : (telemetry?.gate_queues || [])).map((c: any) => {
+
               const risk = c.density > 80 ? 'CRITICAL' : (c.density > 50 ? 'MEDIUM' : 'LOW');
               return (
                 <div key={c.sector} className={`p-3 rounded-2xl border ${styles.subCard} flex justify-between items-center text-xs`}>

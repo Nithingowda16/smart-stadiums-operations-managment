@@ -217,13 +217,19 @@ function App() {
 
   return (
     <div className={`min-h-screen pb-16 flex flex-col font-sans transition-all duration-500 relative overflow-hidden
-      ${!user 
-        ? 'bg-[#f5f5f7] text-[#1d1d1f]' 
-        : (accessibility.highContrast 
-            ? 'bg-black text-white' 
-            : (theme === 'light' ? 'bg-[#f5f5f7] text-[#1d1d1f]' : 'bg-[#000000] text-gray-100'))}
+      ${accessibility.highContrast 
+        ? 'bg-black text-white' 
+        : (theme === 'light' ? 'bg-[#f5f5f7] text-[#1d1d1f]' : 'bg-[#0b0f19] text-gray-100')}
       ${accessibility.largeFont ? 'text-lg font-bold' : 'text-sm'}`}
     >
+
+      <a 
+        href="#main-content" 
+        className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:bg-blue-600 focus:text-white focus:px-4 focus:py-2 focus:z-50 focus:rounded-md font-bold text-xs"
+      >
+        Skip to main content
+      </a>
+
       {/* visionOS background blobs - dark mode only */}
       {user && theme === 'dark' && !accessibility.highContrast && (
         <>
@@ -251,7 +257,8 @@ function App() {
         />
       )}
 
-      <main className="max-w-7xl w-full mx-auto px-6 mt-28 flex-grow relative z-10">
+      <main id="main-content" className="max-w-7xl w-full mx-auto px-6 mt-28 flex-grow relative z-10">
+
         {user ? (
           <Dashboards 
             user={user} 

@@ -33,7 +33,10 @@ export const StadiumMap: React.FC<StadiumMapProps> = ({
 
   // Helper to determine sector density color overlay
   const getSectorColor = (sectorName: string) => {
-    const mapped = crowdDensities.find(c => sectorName.toLowerCase().includes(c.sector.toLowerCase()) || c.sector.toLowerCase().includes(sectorName.toLowerCase()));
+    const crowdArray = Array.isArray(crowdDensities) ? crowdDensities : [];
+    const mapped = crowdArray.find(c => sectorName.toLowerCase().includes(c.sector.toLowerCase()) || c.sector.toLowerCase().includes(sectorName.toLowerCase()));
+
+
     if (!mapped) return 'fill-blue-500/10 stroke-blue-500/35';
     
     const density = mapped.density;
@@ -183,8 +186,9 @@ export const StadiumMap: React.FC<StadiumMapProps> = ({
           )}
 
           {/* Emergencies */}
-          {emergencies.map((emp) => {
-            const matchedNode = nodes.find(n => n.label.toLowerCase().includes(emp.location.toLowerCase()) || emp.location.toLowerCase().includes(n.label.toLowerCase()));
+          {(emergencies || []).map((emp) => {
+            const matchedNode = (nodes || []).find(n => n.label.toLowerCase().includes(emp.location.toLowerCase()) || emp.location.toLowerCase().includes(n.label.toLowerCase()));
+
             const ex = matchedNode ? matchedNode.x : 50.0;
             const ey = matchedNode ? matchedNode.y : 50.0;
             return (

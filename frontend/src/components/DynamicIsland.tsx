@@ -123,11 +123,16 @@ export const DynamicIsland: React.FC<DynamicIslandProps> = ({ alerts }) => {
   }
 
   return (
-    <div className="fixed top-24 left-1/2 transform -translate-x-1/2 z-50 w-full max-w-sm px-4 md:max-w-md transition-all duration-500 ease-out animate-fadeIn">
+    <div 
+      role="alert"
+      aria-live="assertive"
+      className="fixed top-24 left-1/2 transform -translate-x-1/2 z-50 w-full max-w-sm px-4 md:max-w-md transition-all duration-500 ease-out animate-fadeIn"
+    >
       <div 
         onClick={() => setIsExpanded(false)}
         className="bg-black border border-white/15 shadow-2xl rounded-3xl p-5 flex flex-col space-y-4 cursor-pointer hover:scale-[1.01] transition-all"
       >
+
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <div className="p-1.5 rounded-full bg-white/10 text-white">
